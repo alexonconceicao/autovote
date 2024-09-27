@@ -6,4 +6,9 @@ Sistema de autovote para sites
 py voto.py --votos 50
 ```
 
+Bibliotecas externas utilizadas:
+
+- selenium
+- dotenv
+
 Criado por Alexon Conceição

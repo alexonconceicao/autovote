@@ -14,6 +14,12 @@ import argparse
 
 load_dotenv()
 
+LINK = os.getenv("LINK")
+PROXY_HOST = os.getenv("PROXY_HOST")
+PROXY_PORT = os.getenv("PROXY_PORT")
+PROXY_USERNAME = os.getenv("PROXY_USERNAME")
+PROXY_PASS = os.getenv("PROXY_PASS")
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -73,8 +79,15 @@ def delete_cache(driver):
 
 def obter_votos_atual(driver):
     try:
+
         votos_element = driver.find_element(
             By.XPATH, '//*[@id="pds-results"]/li[4]/label/span[2]/span[2]'
+        )
+        wait = WebDriverWait(driver, 30)
+        votos_element = wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, '//*[@id="pds-results"]/li[4]/label/span[2]/span[2]')
+            )
         )
         votos_atual = votos_element.text
         logging.info(f"Quantidade atual de votos: {votos_atual}")
@@ -85,10 +98,6 @@ def obter_votos_atual(driver):
 
 
 def votar_n_vezes(site_url, n_votos):
-    PROXY_HOST = os.getenv("PROXY_HOST")
-    PROXY_PORT = os.getenv("PROXY_PORT")
-    PROXY_USERNAME = os.getenv("PROXY_USERNAME")
-    PROXY_PASS = os.getenv("PROXY_PASS")
 
     logging.info("Configurando proxy...")
     chrome_options = webdriver.ChromeOptions()
@@ -127,11 +136,11 @@ def votar_n_vezes(site_url, n_votos):
             driver.execute_script("arguments[0].click();", vote_button)
             logging.info("Botão de voto clicado.")
 
-            sleep(4)
+            sleep(15)
 
             obter_votos_atual(driver)
 
-            sleep(15)
+            sleep(5)
 
             limpar_cache(driver)
             delete_cache(driver)
@@ -153,7 +162,7 @@ def main():
     args = parser.parse_args()
 
     n_votos = args.votos
-    votar_n_vezes(INSERIR_LINK, n_votos)
+    votar_n_vezes(LINK, n_votos)
 
 
 if __name__ == "__main__":
