@@ -1,5 +1,6 @@
 const { Builder, By, until } = require('selenium-webdriver');
-const { Options } = require('selenium-webdriver/chrome');
+const chrome = require('selenium-webdriver/chrome');
+const { Options, ServiceBuilder } = require('selenium-webdriver/chrome');
 const dotenv = require('dotenv');
 const log = require('loglevel');
 const process = require('process');
@@ -93,9 +94,13 @@ async function voteMultipleTimes(siteUrl, nVotes) {
     );
   }
 
+  const service = new ServiceBuilder('chromedriver.exe').build();
+  service.start();
+
   const driver = new Builder()
     .forBrowser('chrome')
     .setChromeOptions(chromeOptions)
+    .setChromeService()
     .build();
 
   for (let i = 0; i < nVotes; i++) {
@@ -140,6 +145,7 @@ async function voteMultipleTimes(siteUrl, nVotes) {
     }
   }
   await driver.quit();
+  await service.stop();
   log.info('Finalizado.');
 }
 
