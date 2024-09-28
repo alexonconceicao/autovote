@@ -94,7 +94,7 @@ def vote_multiple_times(site_url, n_votes):
             )
             driver.execute_script('arguments[0].scrollIntoView(true);', radio_button)
             time.sleep(wait5)
-            radio_button.click()
+            driver.execute_script('arguments[0].click();', radio_button);
             logging.info('Botão de escolha clicado.')
         except Exception as error:
             logging.error('O botão de escolha não é clicável:', error)
