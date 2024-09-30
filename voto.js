@@ -1,11 +1,14 @@
 const { Builder, By, until } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
 const { Options, ServiceBuilder } = require('selenium-webdriver/chrome');
 const dotenv = require('dotenv');
 const log = require('loglevel');
 const process = require('process');
 
 dotenv.config();
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 const LINK = process.env.LINK;
 const PROXY_HOST = process.env.PROXY_HOST;
@@ -94,6 +97,11 @@ async function voteMultipleTimes(siteUrl, nVotes) {
     );
   }
 
+  chromeOptions.addArguments(`--headless`);
+  chromeOptions.addArguments(`--no-sandbox`);
+  chromeOptions.addArguments(`--disable-dev-shm-usage`);
+  chromeOptions.addArguments('--disable-gpu');
+
   const service = new ServiceBuilder('chromedriver.exe').build();
   service.start();
 
@@ -106,6 +114,7 @@ async function voteMultipleTimes(siteUrl, nVotes) {
   for (let i = 0; i < nVotes; i++) {
     log.info(`Votando ${i + 1} de ${nVotes}...`);
     await driver.get(siteUrl);
+    sleep(2);
     await closePopups(driver);
     await closeCookieBanner(driver);
 
